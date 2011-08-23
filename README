@@ -1,0 +1,3 @@
+Main idea is to utilize ajax on client side and python on server side to edit
+all nested html blocks in-place and independently to remove hardtyped hierarchy
+of the page in server code.
