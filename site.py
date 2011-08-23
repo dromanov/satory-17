@@ -1,9 +1,9 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 That is http/cherrypy frontend to the Satory-17.
 
-CherryPy converts incoming http requests into calls to the engine. 
+CherryPy converts incoming http requests into calls to the engine.
 """
 
 from __future__ import with_statement
@@ -24,6 +24,13 @@ class FrontPage:
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         return u"Paper: %s<hr/>Args: %s<hr/>KWs: %s" % (paper, args, KWs)
+
+    @cherrypy.expose
+    @cherrypy.tools.encode()
+    def debug(self, ID=None, *args, **KWs):
+        """Debug environment."""
+        cherrypy.response.headers['Content-Type'] = "text/html"
+        return u"Debugging '%s'<hr/>Args: %s<hr/>KWs: %s" % (ID, args, KWs)
 
     @cherrypy.expose
     @cherrypy.tools.encode()
