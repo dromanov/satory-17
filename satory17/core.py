@@ -60,6 +60,8 @@ from functools import partial
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "blocks"))
 
+from satory17 import TODO, say
+
 # Decorators are before all blocks, so the blocks can import 'satory17.core'.
 def expose_to_web(func):
     '''Allows 'PLUG' to call the method of instance.'''
@@ -90,16 +92,43 @@ from html_paper   import html_paper
 from div_raw      import div_raw
 from div_markdown import div_markdown
 
-mapper = {
+class SatoryError(Exception):
+    '''Messages from this exceptions are passed to user.'''
+    def __init__(self, value, *args):
+	try:
+	    self.value = value % args
+	except TypeError:
+	    log.warning('bad exception formatting: "%s" %% %s' % (value, args))
+	    self.value = value
+
+    def __str__(self):
+	return str(self.value)
+
+
+MAPPER = {
     'html_paper'   : html_paper,
     'div_raw'      : div_raw,
     'div_markdown' : div_markdown,
 }
 
+def PLUG(ID, form='html', *args, **kw):
+    '''Returns content of the element 'ID' in given form.'''
+    TODO('security checks here')
+    ID_components = re.match('^(\w[\w\d_]+):([\d\w_]+)$', str(ID))
+    if not ID_components:
+	say.error('bad ID: %s', repr(ID))
+	raise SatoryError('bad ID')
+    block, block_id = ID_components.groups()
+    if block_id not in MAPPER:
+	say.error('unknown block: %s' % block)
+	raise SatoryError('unknown block')
 
-def PLUG(ID, method='html', *args, **KWs):
-
-    return ''
+    tile = MAPPER[block](block_id)
+    func = getattr(tile, form, None)
+    if func and getattr(func, 'opened_for_web', False):
+        return func(*args, **kw)
+    else:
+        raise SatoryError('call to protected or missing method')
 
 
 if __name__ == '__main__':
@@ -110,6 +139,3 @@ if __name__ == '__main__':
     import doctest
     doctest.testmod(optionflags=doctest.REPORT_ONLY_FIRST_FAILURE
                                |doctest.NORMALIZE_WHITESPACE)
-
-#    doctest.testfile('core.test',
-#		     encoding='utf-8')
