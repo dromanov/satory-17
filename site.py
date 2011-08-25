@@ -15,7 +15,7 @@ import traceback
 
 import cherrypy
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "satory17"))
+from satory17.core import PLUG
 
 class FrontPage:
     @cherrypy.expose
