@@ -81,24 +81,28 @@ if __name__ == '__main__':
     from functools import partial
 
     class decorator(object):
-	def __init__(self, func):
-	    print 'd.__init__>>>', func
-	    self.func = func
+	def __init__(self, arg1):
+	    print 'd.__init__>>>', arg1
+	    self.arg1 = arg1
 
 	def __get__(self, obj, objtype=None):
 	    if obj is None:
 		return self.func
 	    return partial(self, obj)
 
-	def __call__(self, *args, **kw):
-	    print "c.__call__>>>>", args, kw
-	    return self.func(*args, **kw)
+	def __call__(self, func):
+	    print "c.__call__>>>", func, self.arg1
+	    def wrapped_func(*args, **kw):
+		print "Inside wrapped_f()", args, kw
+		return func(*args, **kw)
+	    return wrapped_func
 
     # example usage
     class Test(object):
         v = 0
-        @decorator
+        @decorator('argument1')
         def inc_add(self, arg):
+	    print self, arg
             self.v += 1
             return self.v + arg
 
