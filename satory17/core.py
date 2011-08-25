@@ -33,28 +33,59 @@ Draft example of the interface:
     ...	    def save(self, content='Content from form'):
     ...	        print 'Here we save the content to database'
     ...		return self.html()
+
+That is draft scenario to refactor later. Choises are:
+class Block:
+    # Choise one: attributes in the 'self'
+    def __init__(self, ID, icon='...', caption='...'):
+	self.icon = icon
+	self.caption = caption
+
+    # Choise two: many decorators.
+    @expose_to_web
+    @toolbar_icon('image/edit.png')
+    def editor(self):
+	return 'Here will be form to edit self.content'
+
+    # Choise three: complex decorator.
+    @expose_to_web(icon='image/edit.png', caption='', links_to={'html' : '..'})
+    def editor(self):
+	return 'Here will be form to edit self.content'
 '''
 
 import sys
 import os
 
+from functools import partial
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "blocks"))
 
-# Decorators are here to be included in all 'html_paper.py', etc.
+# Decorators are before all blocks, so the blocks can import 'satory17.core'.
 def expose_to_web(func):
     '''Allows 'PLUG' to call the method of instance.'''
     func.opened_for_web = True
     return func
 
-def toolbar_icon(image_URL, caption=None):
-    def wrap(func):
-	print "Here will be something..."
-	new_func = lambda : None
-	update_wrapper(new_func, func)
-	return new_func
-    return wrap
+class toolbar_icon(object):
+    '''Decorator with additional arguments (for future development).'''
+    def __init__(self, image_URL, caption=None):
+	self.image_URL = image_URL
+	self.caption = caption
 
+    def __get__(self, obj, objtype=None):
+	if obj is None:
+	    return self.func
+	return partial(self, obj)
 
+    def __call__(self, func):
+	def wrapped_func(*args, **kw):
+	    return func(*args, **kw)
+	# Saves auxiliary information into the function we return to call.
+	wrapped_func.image_URL = self.image_URL
+	wrapped_func.caption = self.caption
+	return wrapped_func
+
+# Note that this modules use decorators above which must stay on top.
 from html_paper   import html_paper
 from div_raw      import div_raw
 from div_markdown import div_markdown
@@ -67,51 +98,18 @@ mapper = {
 
 
 def PLUG(ID, method='html', *args, **KWs):
+
     return ''
 
+
 if __name__ == '__main__':
-    #import sys
-    #reload(sys)
-    #sys.setdefaultencoding("utf-8")
+    import sys
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
-    #import doctest
-    #doctest.testmod(optionflags=doctest.REPORT_ONLY_FIRST_FAILURE
-                               #|doctest.NORMALIZE_WHITESPACE)
-
-    from functools import partial
-
-    class decorator(object):
-	def __init__(self, arg1):
-	    print 'd.__init__>>>', arg1
-	    self.arg1 = arg1
-
-	def __get__(self, obj, objtype=None):
-	    if obj is None:
-		return self.func
-	    return partial(self, obj)
-
-	def __call__(self, func):
-	    print "c.__call__>>>", func, self.arg1
-	    def wrapped_func(*args, **kw):
-		print "Inside wrapped_f()", args, kw
-		return func(*args, **kw)
-	    return wrapped_func
-
-    # example usage
-    class Test(object):
-        v = 0
-        @decorator('argument1')
-        def inc_add(self, arg):
-	    print self, arg
-            self.v += 1
-            return self.v + arg
-
-    t1 = Test()
-    t2 = Test()
-
-    print t1.inc_add(2)
-    print t1.inc_add(2)
-    print t2.inc_add(2)
+    import doctest
+    doctest.testmod(optionflags=doctest.REPORT_ONLY_FIRST_FAILURE
+                               |doctest.NORMALIZE_WHITESPACE)
 
 #    doctest.testfile('core.test',
 #		     encoding='utf-8')
