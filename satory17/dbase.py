@@ -18,7 +18,10 @@ Creating database and playing with it:
     >>> db.save(12, text=u'Hi!  مرحباً! Привет!', annotation='Google it :-)')
     >>> db.haskey(12)
     True
-    >>> db.load(12)
+    >>> for k, v in sorted(db.load(12).items()): print k, '->', v
+    annotation -> Google it :-)
+    key -> 12
+    text -> Hi!  مرحباً! Привет!
 
 
 '''
@@ -61,16 +64,21 @@ class DBase:
             cur = dbase.cursor()
 	    cur.execute(query)
 
-    def haskey(self, item):
-	return False
+    def haskey(self, key):
+        c = self.con.cursor()
+        query = "SELECT COUNT(*) FROM %s WHERE key=?" % self.table
+        values = c.execute(query, (key,)).next()
+        c.close ()
+        return bool(values[0])
 
     def load(self, key, **fields):
         '''Loads data and returns record object.'''
         c = self.con.cursor()
-        (values,) = c.execute("SELECT data FROM world WHERE key=?;",
-								(key,)).next()
+        query = "SELECT %s FROM %s WHERE key=?;" % (','.join(self.fields),
+						    self.table)
+        values = c.execute(query, (key,)).next()
         c.close ()
-        return values
+        return dict(zip(self.fields, values))
 
     def save(self, key, **fields):
 	'''Slow write using separate blocking connection.'''
@@ -102,15 +110,6 @@ if __name__ == '__main__':
     import sys
     reload(sys)
     sys.setdefaultencoding("utf-8")
-
-    import os
-    if os.path.isfile('dummy_db.sqlite3'):
-	os.unlink('dummy_db.sqlite3')
-
-    db = DBase('dummy_db', key=int, text=unicode, annotation=unicode)
-    print db.haskey(12)
-    db.save(12, text=u'Hi!  مرحباً! Привет!', annotation='Google it :-)')
-
 
     import doctest
     doctest.testmod(optionflags=doctest.REPORT_ONLY_FIRST_FAILURE
