@@ -17,14 +17,14 @@ __html = """<!doctype html>
 </body>
 </html>"""
 
-__DB = DBase(filename='html_paper',
+__DB = DBase('html_page',
 	     title=unicode, script=unicode, style=unicode, child_ID=str)
 
-class html_paper:
+class html_page:
     def __init__(self, ID):
 	self.ID = ID
-	if __DB.hasitem(ID):
-	    self.load()
+	if __DB.haskey(ID):
+	    self.reload_from_db()
 	else:
 	    self.title = 'Dummy title'
 	    self.script = 'Dummy script'
@@ -32,13 +32,14 @@ class html_paper:
 	    self.child_ID = 'div_markup:'
 	    self.body = PLUG(self.child_ID)
 
-    def load(self):
+    def reload_from_db(self):
 	assert __DB.hasitem(self.ID), 'bad call to reload'
 	item = __DB.load(ID)
 	self.title = item.title
 	self.script = item.script
 	self.style = item.style
 	self.child_ID = item.child_ID
+	self.body = PLUG(self.child_ID)
 
     @expose_to_web
     def html(self):
@@ -53,5 +54,5 @@ class html_paper:
 	say.warning('implement security checks here')
 	TODO('implement security checks here')
 	__DB.save(title=title, script=script, style=style, child_ID=child_ID)
-	self.load()
+	self.reload_from_db()
 	return self.html()

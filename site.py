@@ -16,6 +16,8 @@ import traceback
 
 import cherrypy
 
+import satory17
+
 from satory17.core import PLUG
 
 class FrontPage:

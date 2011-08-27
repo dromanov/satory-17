@@ -88,12 +88,12 @@ class toolbar_icon(object):
 	return wrapped_func
 
 # Note that this modules use decorators above which must stay on top.
-from html_paper   import html_paper
+from html_page    import html_page
 from div_raw      import div_raw
 from div_markdown import div_markdown
 
 MAPPER = {
-    'html_paper'   : html_paper,
+    'html_page'    : html_page,
     'div_raw'      : div_raw,
     'div_markdown' : div_markdown,
 }
