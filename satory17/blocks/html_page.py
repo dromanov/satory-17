@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from satory17.core  import expose_to_web
+from satory17.core  import expose_to_web, PLUG
 from satory17.dbase import DBase
 
 __html = """<!doctype html>
@@ -17,13 +17,13 @@ __html = """<!doctype html>
 </body>
 </html>"""
 
-__DB = DBase('html_page',
-	     title=unicode, script=unicode, style=unicode, child_ID=str)
+db = DBase('html_page', key=int,
+           title=unicode, script=unicode, style=unicode, child_ID=str)
 
 class html_page:
     def __init__(self, ID):
 	self.ID = ID
-	if __DB.haskey(ID):
+	if db.haskey(ID):
 	    self.reload_from_db()
 	else:
 	    self.title = 'Dummy title'
@@ -33,8 +33,8 @@ class html_page:
 	    self.body = PLUG(self.child_ID)
 
     def reload_from_db(self):
-	assert __DB.hasitem(self.ID), 'bad call to reload'
-	item = __DB.load(ID)
+	assert db.hasitem(self.ID), 'bad call to reload'
+	item = db.load(ID)
 	self.title = item.title
 	self.script = item.script
 	self.style = item.style
@@ -53,6 +53,6 @@ class html_page:
     def save(self, title, script, style, child_ID):
 	say.warning('implement security checks here')
 	TODO('implement security checks here')
-	__DB.save(title=title, script=script, style=style, child_ID=child_ID)
+	db.save(title=title, script=script, style=style, child_ID=child_ID)
 	self.reload_from_db()
 	return self.html()

@@ -10,7 +10,7 @@ arguments are passed to the method.
 Simple example is div-block which allows editing of the content inplace using
 ajax (see div_raw.py).
 
-Draft example of the interface:
+Draft example of the usage of this interface:
     >>> class Block:
     ...	    def __init__(self, ID=None):
     ...		if ID is None:
@@ -55,6 +55,7 @@ class Block:
 
 import sys
 import os
+import re
 
 from functools import partial
 
@@ -87,6 +88,24 @@ class toolbar_icon(object):
 	wrapped_func.caption = self.caption
 	return wrapped_func
 
+def PLUG(ID, form='html', *args, **kw):
+    '''Returns content of the element 'ID' in given form.'''
+    TODO('missing security checks here...')
+    ID_components = re.match('^(\w[\w\d_]+):([\d\w_]+)$', str(ID))
+    if not ID_components:
+	say.error('bad ID: %s', repr(ID))
+	raise SatoryError('bad ID')
+    block, block_id = ID_components.groups()
+    if block not in MAPPER:
+	say.error('unknown block: %s' % block)
+	raise SatoryError('unknown block')
+    tile = MAPPER[block](block_id)
+    func = getattr(tile, form, None)
+    if func and getattr(func, 'opened_for_web', False):
+	return func(*args, **kw)
+    else:
+	raise SatoryError('call to protected or missing method')
+
 # Note that this modules use decorators above which must stay on top.
 from html_page    import html_page
 from div_raw      import div_raw
@@ -97,24 +116,6 @@ MAPPER = {
     'div_raw'      : div_raw,
     'div_markdown' : div_markdown,
 }
-
-def PLUG(ID, form='html', *args, **kw):
-    '''Returns content of the element 'ID' in given form.'''
-    TODO('missing security checks here...')
-    ID_components = re.match('^(\w[\w\d_]+):([\d\w_]+)$', str(ID))
-    if not ID_components:
-	say.error('bad ID: %s', repr(ID))
-	raise SatoryError('bad ID')
-    block, block_id = ID_components.groups()
-    if block_id not in MAPPER:
-	say.error('unknown block: %s' % block)
-	raise SatoryError('unknown block')
-    tile = MAPPER[block](block_id)
-    func = getattr(tile, form, None)
-    if func and getattr(func, 'opened_for_web', False):
-        return func(*args, **kw)
-    else:
-        raise SatoryError('call to protected or missing method')
 
 
 if __name__ == '__main__':
