@@ -18,10 +18,13 @@ _html = """<!doctype html>
 <script type="text/javascript" src="js-core.min.js"></script>
 <script>
     // Setup the page when ready.
-    $.ready();
-</script>
-</body>
-</html>"""
+    $.ready(function () {{
+	$(document).keydown(function (e) {{
+	    window.status = 'Keypress!'
+	    setTimeout("window.status = ''", 500)
+	}})
+    }});
+</script>"""
 
 db = DBase('html_page', key=int,
            title=unicode, script=unicode, style=unicode, child_ID=str)
