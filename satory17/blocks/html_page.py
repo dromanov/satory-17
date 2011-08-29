@@ -15,6 +15,11 @@ _html = """<!doctype html>
 
 <body>
 {content}
+<script type="text/javascript" src="js-core.min.js"></script>
+<script>
+    // Setup the page when ready.
+    $.ready();
+</script>
 </body>
 </html>"""
 

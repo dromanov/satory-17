@@ -19,6 +19,7 @@ import cherrypy
 import satory17
 
 from satory17.core import PLUG
+from satory17      import html_page
 
 class FrontPage:
     @cherrypy.expose
@@ -26,7 +27,7 @@ class FrontPage:
     def default(self, paper="frontpage", *args, **KWs):
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
-        wrapper = satory17.core.html_page(ID='html_page:' + unicode(paper))
+        wrapper = satory17.html_page(ID='html_page:' + unicode(paper))
         return wrapper.html()
 
     @cherrypy.expose

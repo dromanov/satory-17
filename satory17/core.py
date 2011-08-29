@@ -67,7 +67,7 @@ from satory_error import SatoryError, HtmlStub
 # Decorators are before all blocks, so the blocks can import 'satory17.core'.
 def expose_to_web(func):
     '''Allows 'PLUG' to call the method of instance.'''
-    func.opened_for_web = True
+    func.isportlet = True
     return func
 
 class toolbar_icon(object):
@@ -102,23 +102,19 @@ def PLUG(ID, form='html', *args, **kw):
 	return HtmlStub('unknown block')
     tile = MAPPER[block](block_id)
     func = getattr(tile, form, None)
-    if func and getattr(func, 'opened_for_web', False):
+    if func and getattr(func, 'isportlet', False):
 	return func(*args, **kw)
     else:
-	return HtmlStub('call to protected or missing method')
+	return HtmlStub('call to internal or missing method')
 
-# Modules which use decorators and PLUG method are imported here to avoid
-# cross-import conflicts.
-from html_page    import html_page
-from div_raw      import div_raw
-from div_markdown import div_markdown
 
-MAPPER = {
-    'html_page'    : html_page,
-    'div_raw'      : div_raw,
-    'div_markdown' : div_markdown,
-}
-
+MAPPER = {}
+def register_PLUG_class(cls, name):
+    '''Adds new class to a known classes.'''
+    assert name not in MAPPER, 'name %s is used already' % name
+    assert getattr(getattr(cls, 'html', None), 'isportlet', None), \
+	   'tile has no valid `html` method'
+    MAPPER[unicode(name)] = cls
 
 if __name__ == '__main__':
     import sys
