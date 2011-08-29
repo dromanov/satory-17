@@ -11,3 +11,8 @@ class SatoryError(Exception):
 
     def __str__(self):
 	return str(self.value)
+
+from cgi import escape
+
+def HtmlStub(message):
+    return '''<div class='satory-error'>{0}</div>'''.format(escape(message))

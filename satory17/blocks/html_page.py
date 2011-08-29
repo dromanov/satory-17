@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from satory17.core  import expose_to_web, PLUG
-from satory17.dbase import DBase
+from satory17.core         import expose_to_web, PLUG
+from satory17.dbase        import DBase
+from satory17.satory_error import HtmlStub
 
-__html = """<!doctype html>
+_html = """<!doctype html>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -27,9 +28,9 @@ class html_page:
 	    self.reload_from_db()
 	else:
 	    self.title = 'Dummy title'
-	    self.script = 'Dummy script'
-	    self.style = 'Dummy style'
-	    self.child_ID = 'div_markup:'
+	    self.script = '/* Here will be collected scripts */'
+	    self.style = '/* Here will be collected styles */'
+	    self.child_ID = 'unspecified element'
 	    self.body = PLUG(self.child_ID)
 
     def reload_from_db(self):
@@ -43,11 +44,11 @@ class html_page:
 
     @expose_to_web
     def html(self):
-	return __html.format(self=self, content=PLUG(self.child_ID))
+	return _html.format(self=self, content=PLUG(self.child_ID))
 
     @expose_to_web
     def editor(self):
-	return __html.format(self=self, content='Here will be editor')
+	return _html.format(self=self, content='Here will be editor')
 
     @expose_to_web
     def save(self, title, script, style, child_ID):

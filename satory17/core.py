@@ -61,7 +61,8 @@ from functools import partial
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "blocks"))
 
-from satory17 import TODO, say, SatoryError
+from say          import TODO, say
+from satory_error import SatoryError, HtmlStub
 
 # Decorators are before all blocks, so the blocks can import 'satory17.core'.
 def expose_to_web(func):
@@ -94,19 +95,20 @@ def PLUG(ID, form='html', *args, **kw):
     ID_components = re.match('^(\w[\w\d_]+):([\d\w_]+)$', str(ID))
     if not ID_components:
 	say.error('bad ID: %s', repr(ID))
-	raise SatoryError('bad ID')
+	return HtmlStub('bad ID')
     block, block_id = ID_components.groups()
     if block not in MAPPER:
 	say.error('unknown block: %s' % block)
-	raise SatoryError('unknown block')
+	return HtmlStub('unknown block')
     tile = MAPPER[block](block_id)
     func = getattr(tile, form, None)
     if func and getattr(func, 'opened_for_web', False):
 	return func(*args, **kw)
     else:
-	raise SatoryError('call to protected or missing method')
+	return HtmlStub('call to protected or missing method')
 
-# Note that this modules use decorators above which must stay on top.
+# Modules which use decorators and PLUG method are imported here to avoid
+# cross-import conflicts.
 from html_page    import html_page
 from div_raw      import div_raw
 from div_markdown import div_markdown

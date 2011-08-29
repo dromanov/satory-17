@@ -26,7 +26,8 @@ class FrontPage:
     def default(self, paper="frontpage", *args, **KWs):
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
-        return u"Paper: %s<hr/>Args: %s<hr/>KWs: %s" % (paper, args, KWs)
+        wrapper = satory17.core.html_page(ID='html_page:' + unicode(paper))
+        return wrapper.html()
 
     @cherrypy.expose
     @cherrypy.tools.encode()
