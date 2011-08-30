@@ -15,13 +15,28 @@ _html = """<!doctype html>
 
 <body>
 {content}
+<div id='log'>
+</div>
 <script type="text/javascript" src="js-core.min.js"></script>
 <script>
     // Setup the page when ready.
+    satory = {{
+    }}
     $.ready(function () {{
 	$(document).keydown(function (e) {{
-	    window.status = 'Keypress!'
-	    setTimeout("window.status = ''", 500)
+	    keycode = e.keyCode ? e.keyCode : e.charCode
+	    altKey = e.altKey || (keycode == 18);
+	    ctrlKey = e.ctrlKey || (keycode == 17);
+	    if (ctrlKey && altKey) {{
+		window.status = 'Show menu now'
+	    }}
+	}}).keyup(function (e) {{
+	    keycode = e.keyCode ? e.keyCode : e.charCode
+	    altKey = e.altKey || (keycode != 18);
+	    ctrlKey = e.ctrlKey || (keycode != 17);
+	    if (!(satory.ctrlKey && satory.altKey)) {{
+		window.status = 'Hide menu now'
+	    }}
 	}})
     }});
 </script>"""
