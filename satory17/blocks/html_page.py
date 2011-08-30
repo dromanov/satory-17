@@ -10,12 +10,21 @@ _html = """<!doctype html>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>{self.title}</title>
     <script>{self.script}</script>
+    <style>
+	.tile_toolbar {{
+	    display : none;
+	}}
+
+    </style>
     <style>{self.style}</style>
 </head>
 
 <body>
+<div id='page_toolbar' class='tile_toolbar'>
+Here will be tools to choose display mode of the content.
+</div>
+<div id='page_content' class='tile_content'>
 {content}
-<div id='log'>
 </div>
 <script type="text/javascript" src="js-core.min.js"></script>
 <script>
@@ -23,9 +32,11 @@ _html = """<!doctype html>
     satory = {{
 	show_menu : function () {{
 	    window.status = 'Show menu now'
+	    $(document.body).findClass('tile_toolbar').each("show")
 	}},
 	hide_menu : function () {{
 	    window.status = 'Hide menu now'
+	    $(document.body).findClass('tile_toolbar').each("hide")
 	}}
     }}
 
