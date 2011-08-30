@@ -28,7 +28,7 @@ class FrontPage:
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         wrapper = satory17.html_page(ID='html_page:' + unicode(paper))
-        return wrapper.html()
+        return wrapper.full_page()
 
     @cherrypy.expose
     @cherrypy.tools.encode()
@@ -39,7 +39,7 @@ class FrontPage:
 
     @cherrypy.expose
     @cherrypy.tools.encode()
-    def _(self, action="html", *args, **KWs):
+    def _(self, ID, action="html", *args, **KWs):
         """AJAX backend: forwards requests to handlers."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         try:

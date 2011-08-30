@@ -25,7 +25,7 @@ _html = """<!doctype html>
 
 <body>
 <div id='page_toolbar' class='tile_toolbar'>
-    <span onclick='satory.update_tile("page_content", "editor")'>
+    <span onclick='satory.update_tile("page_content", "{self.ID}", "editor")'>
 	[Editor]
     </span>
 </div>
@@ -33,38 +33,43 @@ _html = """<!doctype html>
 {content}
 </div>
 <script type="text/javascript" src="js-core.min.js"></script>
+<script type="text/javascript" src="js-core.ajax.min.js"></script>
 <script>
-    // Setup the page when ready.
-    satory = {{
-	setup_interface: function () {{
+    // Creates Satory module which represents client side of the engine.
+    var satory = (function () {{
+	var self = {{}},
+	    menu_is_visible = false;
+
+	function privateMethod() {{
+	    // ...
+	}}
+
+	self.setup_interface = function () {{
 	    $(document).keydown(function (e) {{
 		keycode = e.keyCode ? e.keyCode : e.charCode
 		altKey = e.altKey || (keycode == 18);
 		ctrlKey = e.ctrlKey || (keycode == 17);
 		if (ctrlKey && altKey) {{
-		    satory.show_menu()
-		}}
-	    }}).keyup(function (e) {{
-		keycode = e.keyCode ? e.keyCode : e.charCode
-		altKey = e.altKey || (keycode != 18);
-		ctrlKey = e.ctrlKey || (keycode != 17);
-		if (!(satory.ctrlKey && satory.altKey)) {{
-		    satory.hide_menu()
+		    self.toggle_menu()
 		}}
 	    }})
-	}},
-	show_menu : function () {{
-	    window.status = 'Show menu now'
-	    $(document.body).findClass('tile_toolbar').each("show")
-	}},
-	hide_menu : function () {{
-	    window.status = 'Hide menu now'
-	    $(document.body).findClass('tile_toolbar').each("hide")
-	}},
-	update_tile : function (ID, method) {{
-	    window.status = 'Asking for tile "' + ID + '"/' + method + ' ...'
 	}}
-    }}
+
+	self.toggle_menu = function () {{
+	    menu_is_visible = !menu_is_visible;
+	    action = menu_is_visible ? 'show' : 'hide';
+	    $(document.body).findClass('tile_toolbar').each(action)
+	}}
+
+	self.update_tile = function (element, ID, method) {{
+	    window.status = 'Performing ajax request for ID="' + ID + '"/' + method + ' ...'
+	    $(element).text('Loading ' + method + '...').load(
+		{{"url":"_/" + ID + "/" + method}}
+	    );
+	}}
+
+	return self;
+    }}());
 
     $.ready(satory.setup_interface);
 </script>"""
@@ -93,9 +98,12 @@ class html_page:
 	self.child_ID = item.child_ID
 	self.body = PLUG(self.child_ID)
 
+    def full_page(self):
+	return _html.format(self=self, content=PLUG(self.child_ID))
+
     @expose_to_web
     def html(self):
-	return _html.format(self=self, content=PLUG(self.child_ID))
+	return PLUG(self.child_ID)
 
     @expose_to_web
     def editor(self):
@@ -103,6 +111,7 @@ class html_page:
 
     @expose_to_web
     def save(self, title, script, style, child_ID):
+	TODO('html5: alert client to update css if required, via web_socket')
 	say.warning('implement security checks here')
 	TODO('implement security checks here')
 	db.save(title=title, script=script, style=style, child_ID=child_ID)
