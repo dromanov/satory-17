@@ -15,13 +15,19 @@ _html = """<!doctype html>
 	    display : none;
 	}}
 
+	.tile_toolbar span {{
+	    color: blue;
+	    text-decoration : underline;
+	}}
     </style>
     <style>{self.style}</style>
 </head>
 
 <body>
 <div id='page_toolbar' class='tile_toolbar'>
-Here will be tools to choose display mode of the content.
+    <span onclick='satory.update_tile("page_content", "editor")'>
+	[Editor]
+    </span>
 </div>
 <div id='page_content' class='tile_content'>
 {content}
@@ -54,6 +60,9 @@ Here will be tools to choose display mode of the content.
 	hide_menu : function () {{
 	    window.status = 'Hide menu now'
 	    $(document.body).findClass('tile_toolbar').each("hide")
+	}},
+	update_tile : function (ID, method) {{
+	    window.status = 'Asking for tile "' + ID + '"/' + method + ' ...'
 	}}
     }}
 
