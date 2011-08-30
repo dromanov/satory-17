@@ -30,6 +30,23 @@ Here will be tools to choose display mode of the content.
 <script>
     // Setup the page when ready.
     satory = {{
+	setup_interface: function () {{
+	    $(document).keydown(function (e) {{
+		keycode = e.keyCode ? e.keyCode : e.charCode
+		altKey = e.altKey || (keycode == 18);
+		ctrlKey = e.ctrlKey || (keycode == 17);
+		if (ctrlKey && altKey) {{
+		    satory.show_menu()
+		}}
+	    }}).keyup(function (e) {{
+		keycode = e.keyCode ? e.keyCode : e.charCode
+		altKey = e.altKey || (keycode != 18);
+		ctrlKey = e.ctrlKey || (keycode != 17);
+		if (!(satory.ctrlKey && satory.altKey)) {{
+		    satory.hide_menu()
+		}}
+	    }})
+	}},
 	show_menu : function () {{
 	    window.status = 'Show menu now'
 	    $(document.body).findClass('tile_toolbar').each("show")
@@ -40,23 +57,7 @@ Here will be tools to choose display mode of the content.
 	}}
     }}
 
-    $.ready(function () {{
-	$(document).keydown(function (e) {{
-	    keycode = e.keyCode ? e.keyCode : e.charCode
-	    altKey = e.altKey || (keycode == 18);
-	    ctrlKey = e.ctrlKey || (keycode == 17);
-	    if (ctrlKey && altKey) {{
-		satory.show_menu()
-	    }}
-	}}).keyup(function (e) {{
-	    keycode = e.keyCode ? e.keyCode : e.charCode
-	    altKey = e.altKey || (keycode != 18);
-	    ctrlKey = e.ctrlKey || (keycode != 17);
-	    if (!(satory.ctrlKey && satory.altKey)) {{
-		satory.hide_menu()
-	    }}
-	}})
-    }});
+    $.ready(satory.setup_interface);
 </script>"""
 
 db = DBase('html_page', key=int,
