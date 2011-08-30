@@ -89,27 +89,27 @@ class toolbar_icon(object):
 	wrapped_func.caption = self.caption
 	return wrapped_func
 
-def PLUG(ID, form='html', *args, **kw):
+def PLUG(ID, method='html', *args, **kw):
     '''Returns content of the element 'ID' in given form.'''
     TODO('missing security checks here...')
     ID_components = re.match('^(\w[\w\d_]+):([\d\w_]+)$', str(ID))
     if not ID_components:
-	say.error('bad ID: %s', repr(ID))
-	return HtmlStub('bad ID')
+	say.error('[PLUG] bad ID: %s', repr(ID))
+	return HtmlStub('[PLUG] bad ID')
     block, block_id = ID_components.groups()
     if block not in MAPPER:
-	say.error('unknown block: %s' % block)
-	return HtmlStub('unknown block')
+	say.error('[PLUG] unregistered class: %s' % block)
+	return HtmlStub('[PLUG] unknown block')
     tile = MAPPER[block](block_id)
-    func = getattr(tile, form, None)
+    func = getattr(tile, method, None)
     if func and getattr(func, 'isportlet', False):
 	return func(*args, **kw)
     else:
-	return HtmlStub('call to internal or missing method')
+	return HtmlStub('[PLUG] call to forbidden/missing method')
 
 
 MAPPER = {}
-def register_PLUG_class(cls, name):
+def register_new_PLUG(cls, name):
     '''Adds new class to a known classes.'''
     assert name not in MAPPER, 'name %s is used already' % name
     assert getattr(getattr(cls, 'html', None), 'isportlet', None), \

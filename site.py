@@ -39,11 +39,11 @@ class FrontPage:
 
     @cherrypy.expose
     @cherrypy.tools.encode()
-    def _(self, ID, action="html", *args, **KWs):
+    def _(self, ID, method="html", *args, **KWs):
         """AJAX backend: forwards requests to handlers."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         try:
-            res = "AJAX"
+            res = PLUG(ID, method)
         except:
             # Feedback in case an ajax call has raised an exception.
             esc = cgi.escape

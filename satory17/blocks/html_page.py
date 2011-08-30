@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from satory17.core         import expose_to_web, PLUG
+from satory17.core         import expose_to_web, PLUG, register_new_PLUG
 from satory17.dbase        import DBase
 from satory17.satory_error import HtmlStub
 
@@ -25,6 +25,9 @@ _html = """<!doctype html>
 
 <body>
 <div id='page_toolbar' class='tile_toolbar'>
+    <span onclick='satory.update_tile("page_content", "{self.ID}", "html")'>
+	[HTML]
+    </span>
     <span onclick='satory.update_tile("page_content", "{self.ID}", "editor")'>
 	[Editor]
     </span>
@@ -40,8 +43,10 @@ _html = """<!doctype html>
 	var self = {{}},
 	    menu_is_visible = false;
 
-	function privateMethod() {{
-	    // ...
+	function toggle_menu() {{
+	    menu_is_visible = !menu_is_visible;
+	    action = menu_is_visible ? 'show' : 'hide';
+	    $(document.body).findClass('tile_toolbar').each(action)
 	}}
 
 	self.setup_interface = function () {{
@@ -50,15 +55,9 @@ _html = """<!doctype html>
 		altKey = e.altKey || (keycode == 18);
 		ctrlKey = e.ctrlKey || (keycode == 17);
 		if (ctrlKey && altKey) {{
-		    self.toggle_menu()
+		    toggle_menu()
 		}}
 	    }})
-	}}
-
-	self.toggle_menu = function () {{
-	    menu_is_visible = !menu_is_visible;
-	    action = menu_is_visible ? 'show' : 'hide';
-	    $(document.body).findClass('tile_toolbar').each(action)
 	}}
 
 	self.update_tile = function (element, ID, method) {{
@@ -117,3 +116,5 @@ class html_page:
 	db.save(title=title, script=script, style=style, child_ID=child_ID)
 	self.reload_from_db()
 	return self.html()
+
+register_new_PLUG(html_page, 'html_page')
