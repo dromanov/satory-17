@@ -21,21 +21,28 @@ _html = """<!doctype html>
 <script>
     // Setup the page when ready.
     satory = {{
+	show_menu : function () {{
+	    window.status = 'Show menu now'
+	}},
+	hide_menu : function () {{
+	    window.status = 'Hide menu now'
+	}}
     }}
+
     $.ready(function () {{
 	$(document).keydown(function (e) {{
 	    keycode = e.keyCode ? e.keyCode : e.charCode
 	    altKey = e.altKey || (keycode == 18);
 	    ctrlKey = e.ctrlKey || (keycode == 17);
 	    if (ctrlKey && altKey) {{
-		window.status = 'Show menu now'
+		satory.show_menu()
 	    }}
 	}}).keyup(function (e) {{
 	    keycode = e.keyCode ? e.keyCode : e.charCode
 	    altKey = e.altKey || (keycode != 18);
 	    ctrlKey = e.ctrlKey || (keycode != 17);
 	    if (!(satory.ctrlKey && satory.altKey)) {{
-		window.status = 'Hide menu now'
+		satory.hide_menu()
 	    }}
 	}})
     }});
