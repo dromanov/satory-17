@@ -102,17 +102,17 @@ class html_page:
         self.child_ID = item.child_ID
 
     def full_page(self):
-        if self.child_ID is None:
-            return _html.format(self=self, content="Here will be constructor")
-        return _html.format(self=self, content=PLUG(self.child_ID))
+        return _html.format(self=self, content=self.html())
 
     @expose_to_web
     def html(self):
+        if self.child_ID is None:
+            return "Here must be constructor"
         return PLUG(self.child_ID)
 
     @expose_to_web
     def editor(self):
-        return _html.format(self=self, content='Here will be editor')
+        return 'Here will be editor'
 
     @expose_to_web
     def save(self, title, script, style, child_ID):
