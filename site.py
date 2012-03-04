@@ -45,7 +45,7 @@ class FrontPage:
         try:
             res = PLUG(ID, method)
         except:
-            # Feedback in case an ajax call has raised an exception.
+            # Reporting an exeption inside of ajax call.
             esc = cgi.escape
             args = ["%s : %s" % (esc(k), esc(KWs[k])) for k in KWs]
             res = """ <h2>AJAX error:</h2>

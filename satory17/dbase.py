@@ -22,8 +22,6 @@ Creating database and playing with it:
     annotation -> Google it :-)
     key -> 12
     text -> Hi!  مرحباً! Привет!
-
-
 '''
 
 from __future__ import with_statement

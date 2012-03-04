@@ -113,7 +113,7 @@ def register_new_PLUG(cls, name):
     '''Adds new class to a known classes.'''
     assert name not in MAPPER, 'name %s is used already' % name
     assert getattr(getattr(cls, 'html', None), 'isportlet', None), \
-	   'tile has no valid `html` method'
+           'tile has no valid `html` method'
     MAPPER[unicode(name)] = cls
 
 if __name__ == '__main__':
