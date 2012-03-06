@@ -19,7 +19,7 @@ import cherrypy
 import satory17
 
 from satory17.core import PLUG
-from satory17      import html_page
+from satory17 import html_page, div_raw
 
 class FrontPage:
     @cherrypy.expose
@@ -27,7 +27,7 @@ class FrontPage:
     def default(self, paper="frontpage", *args, **KWs):
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
-        wrapper = satory17.html_page(ID='html_page:' + unicode(paper))
+        wrapper = satory17.html_page(ID=unicode(paper))
         return wrapper.full_page()
 
     @cherrypy.expose
@@ -39,15 +39,15 @@ class FrontPage:
 
     @cherrypy.expose
     @cherrypy.tools.encode()
-    def _(self, ID, method="html", *args, **KWs):
+    def _(self, ID, method="html", *args, **kws):
         """AJAX backend: forwards requests to handlers."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         try:
-            res = PLUG(ID, method)
+            res = PLUG(ID, method, *args, **kws)
         except:
             # Reporting an exeption inside of ajax call.
             esc = cgi.escape
-            args = ["%s : %s" % (esc(k), esc(KWs[k])) for k in KWs]
+            args = ["%s : %s" % (esc(k), esc(kws[k])) for k in kws]
             res = """ <h2>AJAX error:</h2>
                       %s<hr />
                       <pre>%s</pre>

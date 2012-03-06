@@ -46,21 +46,21 @@ class DBase:
         # 'zip(*arr)' unzips previously zipped array 'arr'.
         items = [('key', key)] + sorted(fields.items())
         keys, values = zip(*items)
-	self.fields = keys
-	self.types = values
+        self.fields = keys
+        self.types = values
         self.table = filename.replace('.', '_')
 
-	sql = { unicode : 'TEXT',
-		str     : 'TEXT',
-		int     : 'INTEGER' }
-	query = "CREATE TABLE IF NOT EXISTS `{0}` (".format(self.table)
-	for field, type in zip(self.fields, self.types):
-	    query += ' `{0}` {1} NOT NULL,'.format(field, sql[type])
-	query += " PRIMARY KEY (key));"
+        sql = { unicode : 'TEXT',
+                str     : 'TEXT',
+                int     : 'INTEGER' }
+        query = "CREATE TABLE IF NOT EXISTS `{0}` (".format(self.table)
+        for field, type in zip(self.fields, self.types):
+            query += ' `{0}` {1} NOT NULL,'.format(field, sql[type])
+        query += " PRIMARY KEY (key));"
         with apsw.Connection(self.filename) as dbase:
             dbase.setbusytimeout(self.timeout_millisecs)
             cur = dbase.cursor()
-	    cur.execute(query)
+            cur.execute(query)
 
     def haskey(self, key):
         c = self.con.cursor()
@@ -69,27 +69,35 @@ class DBase:
         c.close ()
         return bool(values[0])
 
+    def create_new_record_key(self):
+        TODO("Get all keys and test if key is inside the list, much faster")
+        for i in map(str, range(10000)):
+            if not self.haskey(i):
+                return i
+        else:
+            raise ValueError('all 10000 keys are used')
+
     def load(self, key, **fields):
         '''Loads data and returns record object.'''
         c = self.con.cursor()
         query = "SELECT %s FROM %s WHERE key=?;" % (','.join(self.fields),
-						    self.table)
+                                                    self.table)
         values = c.execute(query, (key,)).next()
         c.close ()
         return dict(zip(self.fields, values))
 
     def save(self, key, **fields):
-	'''Slow write using separate blocking connection.'''
-	keys, values = zip(*sorted(fields.items()))
-	if keys != self.fields[1:]:
-	    say.error('dbase %s: declared keys = %s', self.filename, self.keys)
-	    say.error('dbase %s:    saved keys = %s', self.filename, keys)
-	    raise SatoryError('bad save: inconsistent fields')
+        '''Slow write using separate blocking connection.'''
+        keys, values = zip(*sorted(fields.items()))
+        if keys != self.fields[1:]:
+            say.error('dbase %s: declared keys = %s', self.filename, self.keys)
+            say.error('dbase %s:    saved keys = %s', self.filename, keys)
+            raise SatoryError('bad save: inconsistent fields')
 
-	values = (t(v) for t, v in zip(self.types, (key,) + values))
-	questions = ', '.join('?' for v in self.types)
-	query = u"INSERT OR REPLACE INTO %s %s VALUES (%s);" % (self.table,
-							self.fields, questions)
+        values = (t(v) for t, v in zip(self.types, (key,) + values))
+        questions = ', '.join('?' for v in self.types)
+        query = u"INSERT OR REPLACE INTO %s %s VALUES (%s);" % (self.table,
+                                                        self.fields, questions)
         with apsw.Connection(self.filename) as dbase:
             dbase.setbusytimeout(self.timeout_millisecs)
             cur = dbase.cursor()
