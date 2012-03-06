@@ -45,7 +45,11 @@ class div_raw:
 
     @expose_to_web
     def editor(self):
-        return 'Here will be editor'
+        res = '''<h3>Enter new content of <em>div_raw:{self.ID}</em> here:<br/>
+<textarea rows="15" style="width:80%" id="content:div_raw:{self.ID}">
+{self.content}
+</textarea>'''
+        return res.format(self=self)
 
     @expose_to_web
     def save(self, content=None):

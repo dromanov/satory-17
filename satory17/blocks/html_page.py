@@ -38,45 +38,8 @@ _html = """<!doctype html>
 </div>
 <script type="text/javascript" src="js-core.min.js"></script>
 <script type="text/javascript" src="js-core.ajax.min.js"></script>
+<script type="text/javascript" src="backend.js"></script>
 <script>
-    // Creates object Satory to represents client side of the engine.
-    var satory = (function () {{
-        var self = {{}},
-            menu_is_visible = false;
-
-        function toggle_menu() {{
-            menu_is_visible = !menu_is_visible;
-            action = menu_is_visible ? 'show' : 'hide';
-            $(document.body).findClass('tile_toolbar').each(action)
-        }}
-
-        self.setup_interface = function () {{
-            $(document).keydown(function (e) {{
-                keycode = e.keyCode ? e.keyCode : e.charCode
-                altKey = e.altKey || (keycode == 18)
-                ctrlKey = e.ctrlKey || (keycode == 17)
-                if (ctrlKey && altKey) {{
-                    toggle_menu()
-                }}
-            }})
-        }}
-
-        self.update_tile = function (element, ID, method) {{
-            window.status = 'Performing ajax request for ID="' + ID + '"/' + method + ' ...'
-            $(element).text('Loading ' + method + '...').load(
-                {{"url":"_/" + ID + "/" + method}},
-                function () {{
-                    window.status = "AJAX Ok";
-                }},
-                function () {{
-                    $(element).text('AJAX error, sorry...')
-                }}
-            );
-        }}
-
-        return self;
-    }}());
-
     $.ready(satory.setup_interface);
 </script>"""
 
