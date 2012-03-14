@@ -1,6 +1,3 @@
-// AJAX interface from 'http://pastie.org/52045'.
-// USAGE: xhr('rpc.php', 'foo=bar&ar=42', function (text) { alert (text)} )
-
 /*
  * Cookies are used to remember current scrolling position to restore it after
  * reloading page with new LaTeX resolution, updated section and so on.
@@ -35,7 +32,6 @@ function eraseCookie(name)
    createCookie (name, "", -1);
 }
 
-
 // Updates current element (NOT innerHTML but element itself) using ajax:
 //   + id is temporarily changed to avoid name collision;
 //   + parent element is replaced by new version on successful load.
@@ -58,7 +54,7 @@ function pack_form(ID)
    return fields
 }
 
-// Creates object Satory to represents client side of the engine.
+// Creates object 'satory' to wrap a client side of the engine.
 var satory = (function () {
    var self = {},
        menu_is_visible = false;
@@ -80,10 +76,17 @@ var satory = (function () {
       })
    }
 
-   self.update_tile = function (element, ID, method) {
+   self.update_tile = function (element, ID, method, params) {
       window.status = 'Performing ajax request for ID="' + ID + '"/' + method + ' ...'
+      data = {"url":"_/" + ID + "/" + method}
+      if (params) {
+         // TODO: replace with something like Python's 'dict.update()'...
+         for (key in params) {
+            data[key] = params[key]
+         }
+      }
       $(element).text('Loading ' + method + '...').load(
-         {"url":"_/" + ID + "/" + method},
+         data,
          function () { window.status = "AJAX Ok"; },
          function () { $(element).text('AJAX error, sorry...'); }
       );

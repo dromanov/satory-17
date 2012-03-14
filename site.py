@@ -24,6 +24,7 @@ from satory17 import html_page, div_raw
 class FrontPage:
     @cherrypy.expose
     @cherrypy.tools.encode()
+    @cherrypy.tools.decode()
     def default(self, paper="frontpage", *args, **KWs):
         """Frontend: shows entire paper or redirects to a special page."""
         cherrypy.response.headers['Content-Type'] = "text/html"
@@ -39,10 +40,13 @@ class FrontPage:
 
     @cherrypy.expose
     @cherrypy.tools.encode()
+    @cherrypy.tools.decode()
     def _(self, ID, method="html", *args, **kws):
         """AJAX backend: forwards requests to handlers."""
         cherrypy.response.headers['Content-Type'] = "text/html"
         try:
+            satory17.say.warning('args: ' + str(args))
+            satory17.say.warning('kws: ' + str(kws))
             res = PLUG(ID, method, *args, **kws)
         except:
             # Reporting an exeption inside of ajax call.

@@ -5,7 +5,7 @@ from satory17.dbase        import DBase
 from satory17.satory_error import HtmlStub
 from satory17.say          import say, TODO
 
-_html = """<!doctype html>
+_html = u"""<!doctype html>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -85,7 +85,9 @@ class html_page:
     @expose_to_web
     def html(self):
         if self.child_ID is None:
-            return  """<a href="/_/html_page:{ID}/create/div_raw">Create new div_raw</a>
+            return  u"""
+            <h2>Страница, которую вы ищете, отсутствует. Можно создать:<h2>
+            <a href="/_/html_page:{ID}/create/div_raw">Create new div_raw</a>
                       <a href="/_/html_page:{ID}/create/vbox">Create new vbox</a>
                       <a href="/_/html_page:{ID}/create/hbox">Create new hbox</a>
                     """.replace('\n', '<br/>\n').format(ID=self.ID)

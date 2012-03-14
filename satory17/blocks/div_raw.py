@@ -5,7 +5,7 @@ from satory17.dbase        import DBase
 from satory17.satory_error import HtmlStub
 from satory17.say          import say, TODO
 
-_html = """
+_html = u"""
 <div id='toolbar_div_{self.ID}' class='tile_toolbar'>
     <span onclick='satory.update_tile("content_div_{self.ID}", "div_raw:{self.ID}", "html")'>
         [HTML]
@@ -45,14 +45,26 @@ class div_raw:
 
     @expose_to_web
     def editor(self):
-        res = '''<h3>Enter new content of <em>div_raw:{self.ID}</em> here:<br/>
-<textarea rows="15" style="width:80%" id="content:div_raw:{self.ID}">
+        res = u'''<h3>Enter new content of <em>div_raw:{self.ID}</em> here:<br/>
+<textarea rows="15" style="width:80%" 
+          id="content:div_raw:{self.ID}" name="content:div_raw:{self.ID}">
 {self.content}
-</textarea>'''
+</textarea><br/>
+<span onclick='satory.update_tile("content_div_{self.ID}", 
+                                  "div_raw:{self.ID}", "save", 
+                {{"params":{{"content": $("content:div_raw:{self.ID}").val()}}, 
+                  "method":"POST"}})'>
+    [Save]
+</span>
+<span onclick='satory.update_tile("content_div_{self.ID}", "div_raw:{self.ID}", "html")'>
+    [Cancel]
+</span>
+'''
         return res.format(self=self)
 
     @expose_to_web
     def save(self, content=None):
+        say.warning('>>> doing saving here: ' + unicode(content))
         TODO('html5: alert client to update css if required, via web_socket')
         say.warning('implement security checks here')
         TODO('implement security checks here')
