@@ -19,7 +19,6 @@ import cherrypy
 import satory17
 
 from satory17.core import PLUG
-from satory17 import html_page, div_raw
 
 class FrontPage:
     @cherrypy.expose
@@ -60,8 +59,9 @@ class FrontPage:
 
 # Contacts cherrypy's config file.
 root_dir = os.path.dirname(__file__)
-cfg_file = os.path.join(root_dir, 'site.conf')
-cherrypy.tree.mount(FrontPage(), config=cfg_file)
+cfg_file = os.path.join(root_dir, 'server.conf')
 
 if __name__ == '__main__':
-    cherrypy.quickstart(config=os.path.join(root_dir, 'site.conf'))
+    cherrypy.quickstart(FrontPage(), config=os.path.join(root_dir, 'server.conf'))
+else:
+    cherrypy.tree.mount(FrontPage(), config=cfg_file)

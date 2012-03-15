@@ -75,6 +75,11 @@ class html_page:
             new_div_raw.save()
             self.child_ID = 'div_raw:' + new_div_raw.ID
             self.save()
+        if element == 'vbox':
+            new_vbox = MAPPER['vbox']('_create_new_')
+            new_vbox.save()
+            self.child_ID = 'vbox:' + new_vbox.ID
+            self.save()
         return """Creating <em>{element}</em>...
 
         Press '<a href="/{ID}"'>Back</a>' to see new page.

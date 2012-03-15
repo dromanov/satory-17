@@ -105,8 +105,8 @@ def PLUG(ID, method='html', *args, **kw):
     if func and getattr(func, 'isportlet', False):
         return func(*args, **kw)
     else:
-        return HtmlStub('[PLUG] call to forbidden/missing method')
-
+        return HtmlStub('[PLUG] call to forbidden/missing method %s.%s' % 
+                                                               (block, method))
 
 MAPPER = {}
 def register_new_PLUG(cls, name):
@@ -114,6 +114,9 @@ def register_new_PLUG(cls, name):
     assert name not in MAPPER, 'name %s is used already' % name
     assert getattr(getattr(cls, 'html', None), 'isportlet', None), \
            'tile has no valid `html` method'
+    # TODO: activate this check.
+    # assert getattr(getattr(cls, 'full_page', None), 'isportlet', None), \
+    #        'tile has no valid `full_page` method'
     MAPPER[unicode(name)] = cls
 
 if __name__ == '__main__':
