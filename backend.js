@@ -76,7 +76,9 @@ var satory = (function () {
       })
    }
 
-   self.update_tile = function (element, ID, method, params) {
+   // The 'update_tile' calls 'PLUG(ID, method, params)' on server side, and
+   // replaces content of dom-element with 'dom_id' by received chunk of html.
+   self.update_tile = function (dom_id, ID, method, params) {
       window.status = 'Performing ajax request for ID="' + ID + '"/' + method + ' ...'
       data = {"url":"_/" + ID + "/" + method}
       if (params) {
@@ -85,10 +87,10 @@ var satory = (function () {
             data[key] = params[key]
          }
       }
-      $(element).text('Loading ' + method + '...').load(
+      $(dom_id).text('Loading ' + method + '...').load(
          data,
          function () { window.status = "AJAX Ok"; },
-         function () { $(element).text('AJAX error, sorry...'); }
+         function () { $(dom_id).text('AJAX error, sorry...'); }
       );
    }
    return self;

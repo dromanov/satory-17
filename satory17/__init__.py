@@ -9,5 +9,5 @@ from satory_error import SatoryError
 from say          import say, TODO
 from html_page    import html_page
 from div_raw      import div_raw
-from gallery_b	  import gallery
+from gallery	  import gallery
 from vbox         import vbox
